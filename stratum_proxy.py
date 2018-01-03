@@ -197,7 +197,7 @@ class Server:
             self.sockets[fileno].event(event)
 
     def clients_cleanup(self):
-        for client in self.clients:
+        for client in list(self.clients):
             if client.retired():
                 debug(self, "RETIRED %s" % client)
                 del self.clients[client]
