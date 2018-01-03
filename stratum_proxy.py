@@ -13,6 +13,14 @@ PORT = 6666
 BACKEND_ADDRESS = "zec-eu1.nanopool.org"
 BACKEND_PORT    = 6666 
 
+DEBUG = False
+
+################################################################################
+
+def debug(source, text):
+    if DEBUG:
+        print source, text
+
 ################################################################################
 
 class Connection:
@@ -24,7 +32,7 @@ class Connection:
         if socket_accept:
             self.socket, self.addr = socket_accept
             self.connected = True
-            print self, "CONNECTED"
+            debug(self, "CONNECTED")
             self.socket_setmode('r')
         else:
             self.addr = (BACKEND_ADDRESS, BACKEND_PORT)
@@ -40,22 +48,19 @@ class Connection:
             fileno, self.addr, len(self.buffer_in), len(self.buffer_out))
 
     def socket_setmode(self, mode):
-        print self, "SETMODE", mode
+        debug(self, "SETMODE %s" % mode)
         self.client.server.socket_setmode(self.socket, mode, self)
 
     def disconnect(self):
-        print self, "DISCONNECT"
+        debug(self, "DISCONNECT")
         assert(self.connected == True)
-#        try:
         self.socket_setmode(None)
-#        except socket.error:
-#            pass
         self.connected = False
         self.socket.close()
         self.socket = None
 
     def connect(self):
-        print self, "CONNECT"
+        debug(self, "CONNECT")
         assert(self.connected == False)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect(self.addr)
@@ -69,6 +74,7 @@ class Connection:
             self.net_send()
         else:
             print "ERROR: Uknown event", self, event
+            raise SystemExit
 
     def net_receive(self):
         data = self.socket.recv(4096)
@@ -76,7 +82,7 @@ class Connection:
             self.disconnect()
             return
 
-        print self, "<<<", data
+        debug(self, "<<< %s" % data)
         self.buffer_in += data
         self.client.process_connections()
 
@@ -86,7 +92,7 @@ class Connection:
         if not self.buffer_out:
             self.socket_setmode('r')
         if data:
-            print self, ">>>", data
+            debug(self, ">>> %s" % data)
             self.socket.send(data)
         
     def send(self, data):
@@ -109,14 +115,6 @@ class Client:
         self.server  = server
         self.client  = Connection(self, server.socket.accept()) 
         self.backend = Connection(self)
-
-    def __repr__(self):
-        if self.client.connected:
-            fileno = self.client.socket.fileno()
-        else:
-            fileno = -1
-        return "<Client>" # % (
-          #  fileno, len(self.client.buffer_in), len(self.backend.buffer_out))
 
     def retired(self):
         if self.backend.buffer_out != 0:
@@ -178,19 +176,17 @@ class Server:
     def sockets_poll(self, timeout):
         events = self.epoll.poll(timeout)
         for fileno, event in events:
-            #print ">", fileno, event
             assert(self.sockets.has_key(fileno) == True)
             self.sockets[fileno].event(event)
 
     def clients_cleanup(self):
         for client in self.clients:
             if client.retired():
-                print client, "RETIRED"
+                debug(self, "RETIRED %s" % client)
                 del self.clients[client]
 
     def event(self, event):
         assert(event == 1)
-        #print "got event"
         client = Client(self)
         self.clients[client] = True
 
@@ -209,4 +205,6 @@ while True:
     s.sockets_poll(timeout=5)
     s.clients_cleanup()
     s.status()
+
+################################################################################
 
