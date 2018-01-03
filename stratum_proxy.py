@@ -202,6 +202,8 @@ class Server:
         for client in list(self.clients):
             if client.retired():
                 debug(self, "RETIRED %s" % client)
+                del self.clients[client].backend
+                del self.clients[client].client
                 del self.clients[client]
 
     def event(self, event):
