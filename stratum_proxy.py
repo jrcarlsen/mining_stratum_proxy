@@ -134,6 +134,8 @@ class Client:
         self.backend = Connection(self)
 
     def retired(self):
+        if self.backend.connected:
+            return False
         if len(self.backend.buffer_out) != 0:
             return False
         return True
