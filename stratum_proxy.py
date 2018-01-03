@@ -203,8 +203,8 @@ class Server:
             if client.retired():
                 debug(self, "RETIRED %s" % client)
                 # Delete the connections from the client
-                del self.sockets[client.backend.fileno()]
-                del self.sockets[client.client.fileno()]
+                del self.sockets[client.backend.socket.fileno()]
+                del self.sockets[client.client.socket.fileno()]
                 # Remove the client from our client list
                 del self.clients[client]
                 del client
