@@ -202,9 +202,12 @@ class Server:
         for client in list(self.clients):
             if client.retired():
                 debug(self, "RETIRED %s" % client)
-                del self.clients[client].backend
-                del self.clients[client].client
+                # Delete the connections from the client
+                del client.backend
+                del client.client
+                # Remove the client from our client list
                 del self.clients[client]
+                del client
 
     def event(self, event):
         assert(event == 1)
