@@ -162,7 +162,7 @@ class Server:
         # Create a Server Socket for incoming connections
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.socket.bind(('0.0.0.0', LISTEN_PORT))
+        self.socket.bind(('0.0.0.0', port))
         self.socket.listen(1)
         self.socket.setblocking(0)
 
@@ -216,7 +216,7 @@ class Server:
 
 ################################################################################
 
-s = Server(PORT)
+s = Server(LISTEN_PORT)
 
 while True:
     s.sockets_poll(timeout=5)
