@@ -13,7 +13,7 @@ PORT = 5111
 BACKEND_ADDRESS = "eu1.miningpool.shop"
 BACKEND_PORT    = 3533
 
-DEBUG = False
+DEBUG = True
 
 ################################################################################
 
