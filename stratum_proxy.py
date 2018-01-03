@@ -2,16 +2,16 @@
 #
 ################################################################################
 
-import time
 import socket
 import select
+import sys
 
 ################################################################################
 
-PORT = 5111
-
 BACKEND_ADDRESS = "eu1.miningpool.shop"
 BACKEND_PORT    = 3533
+
+LISTEN_PORT = int(sys.argv[1])
 
 DEBUG = True
 
@@ -48,6 +48,7 @@ class Connection:
             fileno, self.addr, len(self.buffer_in), len(self.buffer_out))
 
     def socket_setmode(self, mode):
+        """Configure which events we want to get"""
         debug(self, "SETMODE %s" % mode)
         self.client.server.socket_setmode(self.socket, mode, self)
 
@@ -161,7 +162,7 @@ class Server:
         # Create a Server Socket for incoming connections
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.socket.bind(('0.0.0.0', PORT))
+        self.socket.bind(('0.0.0.0', LISTEN_PORT))
         self.socket.listen(1)
         self.socket.setblocking(0)
 
