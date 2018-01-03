@@ -8,10 +8,10 @@ import select
 
 ################################################################################
 
-PORT = 6666
+PORT = 5111
 
-BACKEND_ADDRESS = "zec-eu1.nanopool.org"
-BACKEND_PORT    = 6666 
+BACKEND_ADDRESS = "eu1.miningpool.shop"
+BACKEND_PORT    = 3533
 
 DEBUG = False
 
@@ -52,48 +52,64 @@ class Connection:
         self.client.server.socket_setmode(self.socket, mode, self)
 
     def disconnect(self):
-        debug(self, "DISCONNECT")
+        """Disconnect the current connection"""
         assert(self.connected == True)
+        debug(self, "DISCONNECT")
         self.socket_setmode(None)
         self.connected = False
         self.socket.close()
         self.socket = None
 
     def connect(self):
-        debug(self, "CONNECT")
+        """Establish the connection"""
         assert(self.connected == False)
+        debug(self, "CONNECT")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect(self.addr)
+        try:
+            self.socket.connect(self.addr)
+        except socket.error:
+            debug(self, "CONNECT FAILED")
+            self.disconnect()
+            return
+
         self.socket_setmode('r')
         self.connected = True        
     
     def event(self, event):
+        # EPOLLIN events goes to the net_receive function
         if event & select.EPOLLIN:
             self.net_receive()
-        elif event & select.EPOLLOUT:
+        # EPOLLOUT events goes to the net_send function
+        if event & select.EPOLLOUT:
             self.net_send()
-        else:
-            print "ERROR: Uknown event", self, event
-            raise SystemExit
 
     def net_receive(self):
+        # If there is data to from the network, read up to 4096 bytes of it
         data = self.socket.recv(4096)
+
+        # If there is no data, it means we got disconnected
         if not data:
             self.disconnect()
             return
 
+        # Add the data to our input buffer
         debug(self, "<<< %s" % data)
         self.buffer_in += data
+
+        # Scan the input buffer to see if we got any complete commands yet
         self.client.process_connections()
 
     def net_send(self):
+        # If there is data in the out buffer, send 4096 bytes of it
         data = self.buffer_out[:4096]
         self.buffer_out = self.buffer_out[4096:]
-        if not self.buffer_out:
-            self.socket_setmode('r')
         if data:
             debug(self, ">>> %s" % data)
             self.socket.send(data)
+
+        # If there is no more data to send, we only want to be informed of read events
+        if not self.buffer_out:
+            self.socket_setmode('r')
         
     def send(self, data):
         self.buffer_out += data
