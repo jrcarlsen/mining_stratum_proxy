@@ -29,11 +29,11 @@ class Monitor:
             'proxies': self.show_proxy,
         }
 
-        if not show_map.has_key(show_cmd):
-            proxy.client.send('error in command: %s\n' % `show_cmd`)
+        if not show_map.has_key(cmd_show):
+            proxy.client.send('error in command: %s\n' % `cmd_show`)
             return
 
-        show_map[show_cmd](proxy, cmd)
+        show_map[cmd_show](proxy, cmd)
 
     def show_proxy(self, proxy, cmd):
         for p in proxy.server.clients:
