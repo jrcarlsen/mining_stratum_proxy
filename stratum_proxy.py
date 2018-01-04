@@ -6,6 +6,7 @@ import socket
 import select
 import sys
 
+import commands
 import config
 
 ################################################################################
@@ -144,15 +145,15 @@ class Client:
         lines = self.client.parse_buffer()
         if self.monitor_mode:
             for line in lines:
+                line = line.replace('\r', '')
                 self.process_input(line)
             return
 
         for line in lines:
             cmd = line.replace('\r', '')
-            print 'CMD:', self, `cmd`
             if cmd == 'monitor':
                 self.monitor_mode = True
-                self.client.send('monitor mode enabled\n')
+                self.client.send('monitor mode enabled\n> \n')
                 self.backend.disconnect()
                 return
             self.backend.send(line+'\n')
@@ -166,8 +167,12 @@ class Client:
             self.backend.connect()
 
     def process_input(self, line):
-        if line == 'connections':
-            self.client.send('connected clients: %i\n' % len(self.server.clients))
+        cmd = line.split(' ')
+        if commands.cmd_map.has_key(cmd[0]):
+            command.cmd_map[cmd[0]](self, cmd)
+        else:
+            self.client.send('bad command: `%s`\n' % cmd[0])
+        self.client.send('> ')
 
 ################################################################################
 
