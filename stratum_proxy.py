@@ -214,11 +214,12 @@ class Server:
         self.clients[client] = True
 
     def status(self):
-        for c in self.clients:
-            print "[32mC ", c
-            print " => client:  ", c.client
-            print " => backend: ", c.backend
-        print "[0m"
+        if config.DEBUG:
+            for c in self.clients:
+                print "[32mC ", c
+                print " => client:  ", c.client
+                print " => backend: ", c.backend
+            print "[0m"
 
 ################################################################################
 
