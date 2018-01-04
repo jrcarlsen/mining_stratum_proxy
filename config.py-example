@@ -1,0 +1,21 @@
+DEBUG = False
+
+LISTEN_PORT = 5111
+
+BACKEND_ADDRESS = "eu1.miningpool.shop"
+BACKEND_PORT    = 3533
+
+# How much data in output buffer before we disconnect the client for 
+# flooding the server
+CLIENT_BUFFER_MAX = 32*1024
+
+# How long does the client have to stay quiet for just after connecting
+# before we disconnect.
+CLIENT_TIMEOUT_HELLO    = 2000
+
+# How long do we wait from a subscribe to first approved share, before
+# disconnecting the client.
+CLIENT_TIMEOUT_NOSHARE  =
+
+# How long do we wait between approved shared, before disconnecting.
+CLIENT_TIMEOUT_SHARE    =

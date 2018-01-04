@@ -8,7 +8,7 @@ class Monitor:
         client.client.disconnect()
 
     def cmd_fail(self, client, cmd):
-        assert(1==2)
+        a = b
 
     def cmd_noop(self, client, cmd):
         return

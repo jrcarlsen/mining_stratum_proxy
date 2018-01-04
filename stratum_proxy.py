@@ -97,6 +97,10 @@ class Connection:
         debug(self, "<<< %s" % data)
         self.buffer_in += data
 
+        if len(self.buffer_in) > config.CLIENT_MAX_BUFFER:
+            self.disconnect()
+            return
+
         # Scan the input buffer to see if we got any complete commands yet
         self.client.process_connections()
 
