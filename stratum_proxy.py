@@ -153,7 +153,7 @@ class Client:
             cmd = line.replace('\r', '')
             if cmd == 'monitor':
                 self.monitor_mode = True
-                self.client.send('monitor mode enabled\n> \n')
+                self.client.send('monitor mode enabled\n> ')
                 self.backend.disconnect()
                 return
             self.backend.send(line+'\n')
@@ -169,7 +169,7 @@ class Client:
     def process_input(self, line):
         cmd = line.split(' ')
         if commands.cmd_map.has_key(cmd[0]):
-            command.cmd_map[cmd[0]](self, cmd)
+            commands.cmd_map[cmd[0]](self, cmd)
         else:
             self.client.send('bad command: `%s`\n' % cmd[0])
         self.client.send('> ')
