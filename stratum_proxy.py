@@ -138,7 +138,6 @@ class Client:
 
         if self.backend.connected:
             self.backend.disconnect()
-
         return True
 
     def process_connections(self):
@@ -149,8 +148,9 @@ class Client:
             return
 
         for line in lines:
-            print 'CMD:', self, line
+            print 'CMD:', self, `line`
             if line == 'monitor':
+                print "monitor mode"
                 self.monitor_mode = True
                 self.client.send('monitor mode enabled\n')
                 self.backend.disconnect()
