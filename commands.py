@@ -27,6 +27,8 @@ class Monitor:
         show_map = {
             'proxy': self.show_proxy,
             'proxies': self.show_proxy,
+            'connection': self.show_connection,
+            'connections': self.show_connection,
         }
 
         if not show_map.has_key(cmd_show):
@@ -38,6 +40,12 @@ class Monitor:
     def show_proxy(self, proxy, cmd):
         for p in proxy.server.clients:
             proxy.client.send(`p`+'\n')
+
+    def show_connection(self, proxy, cmd):
+        for p in proxy.server.clients:
+            proxy.client.send(`p`+'\n')
+            proxy.client.send(' '+`p.client`+'\n')
+            proxy.client.send(' '+`p.backend`+'\n')
 
 ################################################################################
 
