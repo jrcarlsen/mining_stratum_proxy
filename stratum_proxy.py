@@ -148,9 +148,9 @@ class Client:
             return
 
         for line in lines:
-            print 'CMD:', self, `line`
-            if line == 'monitor':
-                print "monitor mode"
+            cmd = line.replace('\r', '')
+            print 'CMD:', self, `cmd`
+            if cmd == 'monitor':
                 self.monitor_mode = True
                 self.client.send('monitor mode enabled\n')
                 self.backend.disconnect()
