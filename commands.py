@@ -48,6 +48,7 @@ cmd_map = {
     'status':       m.cmd_status,
     'quit':         m.cmd_quit,
     'fail':         m.cmd_fail,
+    'show':         m.cmd_show,
     '':             m.cmd_noop,
 }
 
