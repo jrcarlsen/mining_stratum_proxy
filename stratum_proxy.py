@@ -138,6 +138,10 @@ class Client:
             return False
         if len(self.backend.buffer_out) != 0:
             return False
+
+        if self.backend.connected:
+            self.backend.disconnect()
+
         return True
 
     def process_connections(self):
@@ -202,9 +206,6 @@ class Server:
         for client in list(self.clients):
             if client.retired():
                 debug(self, "RETIRED %s" % client)
-                # Delete the connections from the client
-                del self.sockets[client.backend.socket.fileno()]
-                del self.sockets[client.client.socket.fileno()]
                 # Remove the client from our client list
                 del self.clients[client]
                 del client
