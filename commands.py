@@ -37,7 +37,7 @@ class Monitor:
 
     def show_proxy(self, proxy, cmd):
         for p in proxy.server.clients:
-            proxy.client.send(`p`)
+            proxy.client.send(`p`+'\n')
 
 ################################################################################
 

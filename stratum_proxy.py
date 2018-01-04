@@ -127,12 +127,15 @@ class Connection:
 
 ################################################################################
 
-class Client:
+class Proxy:
     def __init__(self, server):
         self.server  = server
         self.client  = Connection(self, server.socket.accept()) 
         self.backend = Connection(self)
         self.monitor_mode = False
+
+    def __repr__(self):
+        return "<Proxy backend_connected=%s client_connected=%s>" % (self.client.connected, self.backend.connected)
 
     def retired(self):
         if self.client.connected:
@@ -243,8 +246,8 @@ class Server:
 
     def event(self, event):
         assert(event == 1)
-        client = Client(self)
-        self.clients[client] = True
+        proxy = Proxy(self)
+        self.clients[proxy] = True
 
     def status(self):
         if config.DEBUG:
