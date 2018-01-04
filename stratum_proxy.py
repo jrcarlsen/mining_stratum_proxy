@@ -128,6 +128,7 @@ class Client:
         self.server  = server
         self.client  = Connection(self, server.socket.accept()) 
         self.backend = Connection(self)
+        self.monitor_mode = False
 
     def retired(self):
         if self.client.connected:
@@ -142,15 +143,30 @@ class Client:
 
     def process_connections(self):
         lines = self.client.parse_buffer()
+        if self.monitor_mode:
+            for line in lines:
+                self.process_input(line)
+            return
+
         for line in lines:
+            if line == 'monitor':
+                self.monitor_mode = True
+                self.client.send('monitor mode enabled\n')
+                self.backend.disconnect()
+                return
             self.backend.send(line+'\n')
         
         lines = self.backend.parse_buffer()
         for line in lines:
             self.client.send(line+'\n')
 
-        if not self.backend.connected:
+        # If the backend got disconnected, re-connect and resend data.
+        if len(self.backend.buffer_out) > 0 and not self.backend.connected:
             self.backend.connect()
+
+    def process_input(self, line):
+        if line == 'connections':
+            self.client.send('connected clients: %i\n' % len(self.server.clients))
 
 ################################################################################
 
