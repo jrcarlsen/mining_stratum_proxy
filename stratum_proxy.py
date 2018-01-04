@@ -149,6 +149,7 @@ class Client:
             return
 
         for line in lines:
+            print 'CMD:', self, line
             if line == 'monitor':
                 self.monitor_mode = True
                 self.client.send('monitor mode enabled\n')
