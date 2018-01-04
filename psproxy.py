@@ -6,7 +6,7 @@ import socket
 import select
 import sys
 
-import commands
+from modules import commands
 import config
 
 ################################################################################
