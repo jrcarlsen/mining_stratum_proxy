@@ -47,11 +47,14 @@ class Connection:
 
     def disconnect(self):
         """Disconnect the current connection"""
-        assert(self.connected == True)
         debug(self, "DISCONNECT")
-        self.socket_setmode(None)
+        if self.connected:
+            self.socket_setmode(None)
+            try:
+                self.socket.close()
+            except IOError:
+                pass
         self.connected = False
-        self.socket.close()
         self.socket = None
 
     def connect(self):
@@ -66,8 +69,8 @@ class Connection:
             self.disconnect()
             return
 
-        self.socket_setmode('r')
         self.connected = True        
+        self.socket_setmode('r')
     
     def event(self, event):
         # EPOLLIN events goes to the net_receive function
