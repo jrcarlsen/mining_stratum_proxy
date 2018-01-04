@@ -197,6 +197,8 @@ class Server:
         return "<Server fileno='%i', clients='%i'>" % (self.socket.fileno(), len(self.clients))
 
     def socket_setmode(self, socket, mode, callback_obj):
+        if not socket:
+            return
         if not mode:
             del self.sockets[socket.fileno()]
             self.epoll.unregister(socket.fileno())
