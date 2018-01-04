@@ -83,7 +83,10 @@ class Connection:
 
     def net_receive(self):
         # If there is data to from the network, read up to 4096 bytes of it
-        data = self.socket.recv(4096)
+        try:
+            data = self.socket.recv(4096)
+        except socket.error:
+            data = None
 
         # If there is no data, it means we got disconnected
         if not data:

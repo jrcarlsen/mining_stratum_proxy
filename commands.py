@@ -26,6 +26,7 @@ m = Monitor()
 
 cmd_map = {
     'connections':  m.cmd_connections,
+    'status':       m.cmd_status,
     'quit':         m.cmd_quit,
     'fail':         m.cmd_fail,
     '':             m.cmd_noop,
