@@ -44,8 +44,10 @@ class Monitor:
     def show_connection(self, proxy, cmd):
         for p in proxy.server.clients:
             proxy.client.send(`p`+'\n')
-            proxy.client.send(' '+`p.client`+'\n')
-            proxy.client.send(' '+`p.backend`+'\n')
+            if p.client.connected:
+                proxy.client.send(' '+`p.client`+'\n')
+            if p.backend.connected:
+                proxy.client.send(' '+`p.backend`+'\n')
 
 ################################################################################
 
