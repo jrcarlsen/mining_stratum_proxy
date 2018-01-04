@@ -20,6 +20,25 @@ class Monitor:
         mesg += "Connections: %i\n" % len(client.server.clients)
         client.client.send(mesg)
 
+    def cmd_show(self, proxy, cmd):
+        if len(cmd) > 1:
+            cmd_show = cmd[1]
+
+        show_map = {
+            'proxy': self.show_proxies,
+            'proxies': self.show_proxies,
+        }
+
+        if not show_map.has_key(show_cmd):
+            proxy.client.send('error in command: %s\n' % `show_cmd`)
+            return
+
+        show_map[show_cmd](proxy, cmd)
+
+    def show_clients(self, proxy, cmd):
+        for p in proxy.server.clients:
+            proxy.client.send(`p`)
+
 ################################################################################
 
 m = Monitor()
