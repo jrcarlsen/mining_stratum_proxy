@@ -6,19 +6,12 @@ import socket
 import select
 import sys
 
-################################################################################
-
-BACKEND_ADDRESS = "eu1.miningpool.shop"
-BACKEND_PORT    = 3533
-
-LISTEN_PORT = int(sys.argv[1])
-
-DEBUG = True
+import config
 
 ################################################################################
 
 def debug(source, text):
-    if DEBUG:
+    if config.DEBUG:
         print source, text
 
 ################################################################################
@@ -35,7 +28,7 @@ class Connection:
             debug(self, "CONNECTED")
             self.socket_setmode('r')
         else:
-            self.addr = (BACKEND_ADDRESS, BACKEND_PORT)
+            self.addr = (config.BACKEND_ADDRESS, config.BACKEND_PORT)
             self.socket = None
             self.connected = False
 
@@ -229,7 +222,7 @@ class Server:
 
 ################################################################################
 
-s = Server(LISTEN_PORT)
+s = Server(config.LISTEN_PORT)
 
 while True:
     s.sockets_poll(timeout=5)
