@@ -169,7 +169,10 @@ class Client:
     def process_input(self, line):
         cmd = line.split(' ')
         if commands.cmd_map.has_key(cmd[0]):
-            commands.cmd_map[cmd[0]](self, cmd)
+            try:
+                commands.cmd_map[cmd[0]](self, cmd)
+            except Exception, e:
+                self.client.send('command failed:\n%s' % e)
         else:
             self.client.send('bad command: `%s`\n' % cmd[0])
         self.client.send('> ')
