@@ -197,7 +197,12 @@ class Server:
             self.epoll.modify(socket.fileno(), modes[mode])
 
     def sockets_poll(self, timeout):
-        events = self.epoll.poll(timeout)
+        try:
+            events = self.epoll.poll(timeout)
+        except IOError:
+            # IOError: [Errno 4] Interrupted system call
+            return
+
         for fileno, event in events:
             assert(self.sockets.has_key(fileno) == True)
             self.sockets[fileno].event(event)
